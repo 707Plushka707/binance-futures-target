@@ -21,18 +21,18 @@
         <h1 class="text-3xl font-semibold text-center text-gray-400">Binance Futures: Balance Target</h1>
         <div class="grid grid-cols-3 gap-4 mt-16">
           <div>
-            <p class="font-light text-gray-400">Balance</p>
-            <h2 class="text-3xl text-blue-600">
-              {{ crossWalletBalance }}
+            <p class="font-light text-gray-400">Margin</p>
+            <h2
+              class="text-3xl"
+              :class="{'text-red-600': currentBalance < crossWalletBalance, 'text-green-500': currentBalance > crossWalletBalance, 'text-blue-600': currentBalance === crossWalletBalance}"
+            >
+              {{ currentBalance }}
               <sup class="text-base text-gray-600">{{ asset }}</sup>
             </h2>
-            <h4 class="text-gray-600 text-xs mt-4">
-              Margin:
-              <span
-                class="mt-2 text-base font-semibold"
-                :class="{'text-red-600': currentBalance < crossWalletBalance, 'text-green-500': currentBalance > crossWalletBalance, 'text-blue-600': currentBalance === crossWalletBalance}"
-              >
-                {{ currentBalance }} <sup>{{ asset }}</sup>
+            <h4 class="text-blue-600 text-xs mt-4">
+              Balance:
+              <span class="mt-2 text-base font-semibold">
+                {{ crossWalletBalance }} <sup>{{ asset }}</sup>
               </span>
             </h4>
             <p
@@ -97,11 +97,6 @@
         mounted() {
           this.$nextTick(async () => {
             await this.fetch()
-            const cached = localStorage.getItem("crossUnPnl")
-            if (cached) {
-              const currentCached = JSON.parse(cached)
-              this.history = currentCached
-            }
 
             setInterval(async () => await this.fetch(), 2000)
           })
@@ -111,18 +106,18 @@
           histories() {
             return this.history
               .reverse()
-              .reduce((acc, cur) => {
+              .reduce((acc, cur, i) => {
                 const curVal = { ...cur }
                 if (acc.length === 0) {
                   curVal.sign = null
                   return [...acc, curVal]
-                } else if (cur.balance > acc.balance) {
+                } else if (Number(curVal.balance) > Number(acc[i - 1].balance)) {
                   curVal.sign = "+"
                   return [...acc, curVal]
+                } else {
+                  curVal.sign = "-"
+                  return [...acc, curVal]
                 }
-
-                curVal.sign = "-"
-                return [...acc, curVal]
               }, [])
               .reverse()
           },
@@ -130,6 +125,12 @@
 
         methods: {
           async fetch() {
+            const cached = localStorage.getItem("crossUnPnl")
+            if (cached) {
+              const currentCached = JSON.parse(cached)
+              this.history = currentCached
+            }
+
             const $target = localStorage.getItem("target")
             const urlSearchParams = new URLSearchParams(window.location.search)
             const params = Object.fromEntries(urlSearchParams.entries())
