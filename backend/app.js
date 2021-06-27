@@ -1,12 +1,9 @@
-require("dotenv").config()
+require("dotenv").config({
+  path: "../.env",
+})
 const path = require("path")
 const fastify = require("fastify")({
   logger: true,
-})
-fastify.register(require("point-of-view"), {
-  engine: {
-    ejs: require("ejs"),
-  },
 })
 
 fastify.register(require("fastify-static"), {
@@ -15,7 +12,7 @@ fastify.register(require("fastify-static"), {
 })
 
 fastify.register(require("fastify-cors"), {
-  origin: ["http://localhost"],
+  origin: ["http://localhost:5002"],
 })
 
 const Binance = require("node-binance-api")
@@ -33,11 +30,11 @@ fastify.get("/v1/balance", async (req, rep) => {
     const distance = targetBalance - currentBalance
 
     return rep.send({
-      crossWalletBalance: balance.crossWalletBalance,
-      currentBalance: currentBalance.toFixed(4),
+      crossWalletBalance: Number(balance.crossWalletBalance),
+      currentBalance: Number(currentBalance.toFixed(4)),
       targetBalance,
       crossUnPnl: parseFloat(balance.crossUnPnl),
-      distance: distance.toFixed(4),
+      distance: Number(distance.toFixed(4)),
       asset: balance.asset,
     })
   } catch (err) {
@@ -48,9 +45,10 @@ fastify.get("/v1/balance", async (req, rep) => {
   }
 })
 
-fastify.get("/", async (req, rep) => {
+fastify.get("/v1/prices", async (req, rep) => {
   try {
-    return rep.view("./templates/index.ejs")
+    const prices = await binance.prices()
+    return rep.send(prices)
   } catch (err) {
     return rep.send({
       errCode: 0,
