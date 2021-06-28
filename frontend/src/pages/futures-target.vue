@@ -94,7 +94,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, nextTick, onMounted, reactive } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, reactive } from 'vue'
   import { useRoute } from 'vue-router'
 
   const data = reactive<any>({
@@ -105,6 +105,7 @@
     asset: 'USDT',
     crossWalletBalance: 0,
     history: [],
+    fetchInterval: null,
   })
 
   const routes = useRoute()
@@ -112,7 +113,11 @@
   onMounted(async () => {
     await nextTick()
     await fetchData()
-    setInterval(async () => await fetchData(), 2000)
+    data.fetchInterval = setInterval(async () => await fetchData(), 2000)
+  })
+
+  onUnmounted(() => {
+    clearInterval(data.fetchInterval)
   })
 
   const fetchData = async () => {

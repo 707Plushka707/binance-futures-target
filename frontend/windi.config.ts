@@ -13,15 +13,14 @@ export default defineConfig({
       colors: {
         primary: colors.yellow,
         gray: colors.trueGray,
+        dark: colors.dark,
       },
     },
   },
 
   shortcuts: {
-    input: {
-      '@apply':
-        'border-gray-300 border rounded block w-full text-gray-600 px-4 py-2 leading-base outline-none transition focus:(border-primary-600 transition)',
-      '&.has-error': 'border-red-600 placeholder:text-red-600 text-red-600',
-    },
+    'form-label': 'mb-2 block',
+    input:
+      'border-gray-300 border rounded block w-full text-gray-600 px-4 py-2 leading-base outline-none transition focus:(border-primary-600 transition) dark:(bg-dark-800 text-white border-transparent)',
   },
 })

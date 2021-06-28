@@ -1,6 +1,19 @@
 <template>
   <div>
-    <div class="flex px-4 w-full items-center h-12 fixed top-0">
+    <div
+      class="
+        flex
+        px-4
+        w-full
+        items-center
+        h-12
+        fixed
+        top-0
+        border-b
+        dark:(border-dark-500
+        bg-dark-800)
+      "
+    >
       <router-link to="/">
         <icon-logo class="text-3xl" />
       </router-link>
