@@ -9,9 +9,10 @@
   "license": "MIT",
   "version": "0.0.2",
   "scripts": {
-    "dev": "vite --port 5002 --open",
+    "dev": "vite --port 5002 --host",
     "build": "vite-ssg build",
-    "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
+    "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore .",
+    "preview": "vite preview --port 5002 --host"
   },
   "dependencies": {
     "@vueform/multiselect": "^2.0.0",

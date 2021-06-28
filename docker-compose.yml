@@ -1,8 +1,0 @@
-version: "3"
-
-services:
-  binance_calculator:
-    container_name: binance-future-target
-    image: senpp/binance-future-target:latest
-    ports:
-      - 5001:5001
